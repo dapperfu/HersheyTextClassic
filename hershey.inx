@@ -94,7 +94,7 @@ pen plotters to CNC routers) can efficiently follow.
 For a full introduction, please visit:
   www.evilmadscientist.com/go/hershey</_param>
     </page>
-    <page name="info" _gui-text="Credits">
+    <page name="credits" _gui-text="Credits">
       <_param name="aboutpage" type="description" xml:space="preserve">
 The classic fonts included -- those without the "EMS"
 prefix -- are derived from work by Dr. A. V. Hershey,
@@ -122,6 +122,6 @@ distribution or visit:
     </effects-menu>
   </effect>
   <script>
-    <command reldir="extensions" interpreter="python">hershey.py</command>
+    <command location="inx" interpreter="python">hershey.py</command>
   </script>
 </inkscape-extension>
