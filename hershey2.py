@@ -23,16 +23,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
-import hersheydata  # data file w/ Hershey font data
 import inkex
 import simplestyle
+from lxml import etree
+
+import hersheydata  # data file w/ Hershey font data
 
 Debug = False
 FONT_GROUP_V_SPACING = 45
 
 
 def draw_svg_text(char, face, offset, vertoffset, parent):
-    style = {'stroke': '#000000', 'fill': 'none'}
+    style = {"stroke": "#000000", "fill": "none"}
     path_string = face[char]
     split_string = path_string.split()
     midpoint = offset - float(split_string[0])
@@ -41,9 +43,13 @@ def draw_svg_text(char, face, offset, vertoffset, parent):
     # We only want to generate paths for visible glyphs where splitpoint > 0
     if splitpoint > 0:
         path_string = path_string[splitpoint:]  # portion after first move
-        trans = 'translate({0},{1})'.format(midpoint, vertoffset)
-        text_attribs = {'style': simplestyle.formatStyle(style), 'd': path_string, 'transform': trans}
-        inkex.etree.SubElement(parent, inkex.addNS('path', 'svg'), text_attribs)
+        trans = "translate({0},{1})".format(midpoint, vertoffset)
+        text_attribs = {
+            "style": simplestyle.formatStyle(style),
+            "d": path_string,
+            "transform": trans,
+        }
+        etree.SubElement(parent, inkex.addNS("path", "svg"), text_attribs)
     return midpoint + float(split_string[1])  # new offset value
 
 
@@ -57,32 +63,47 @@ def svg_text_width(char, face, offset):
 class Hershey(inkex.Effect):
     def __init__(self):
         inkex.Effect.__init__(self)
-        self.OptionParser.add_option("--tab",  # NOTE: value is not used.
-                                     action="store", type="string",
-                                     dest="tab", default="splash",
-                                     help="The active tab when Apply was pressed")
-        self.OptionParser.add_option("--text",
-                                     action="store", type="string",
-                                     dest="text", default="Hershey Text for Inkscape",
-                                     help="The input text to render")
-        self.OptionParser.add_option("--action",
-                                     action="store", type="string",
-                                     dest="action", default="render",
-                                     help="The active option when Apply was pressed")
-        self.OptionParser.add_option("--fontface",
-                                     action="store", type="string",
-                                     dest="fontface", default="rowmans",
-                                     help="The selected font face when Apply was pressed")
+        self.arg_parser.add_argument(
+            "--tab",  # NOTE: value is not used.
+            action="store",
+            type=str,
+            dest="tab",
+            default="splash",
+            help="The active tab when Apply was pressed",
+        )
+        self.arg_parser.add_argument(
+            "--text",
+            action="store",
+            type=str,
+            dest="text",
+            default="Hershey Text for Inkscape",
+            help="The input text to render",
+        )
+        self.arg_parser.add_argument(
+            "--action",
+            action="store",
+            type=str,
+            dest="action",
+            default="render",
+            help="The active option when Apply was pressed",
+        )
+        self.arg_parser.add_argument(
+            "--fontface",
+            action="store",
+            type=str,
+            dest="fontface",
+            default="rowmans",
+            help="The selected font face when Apply was pressed",
+        )
 
     def effect(self):
 
         output_generated = False
 
         # Embed text in group to make manipulation easier:
-        g_attribs = {inkex.addNS('label', 'inkscape'): 'Hershey Text'}
-        g = inkex.etree.SubElement(self.current_layer, 'g', g_attribs)
-
-        scale = self.unittouu('1px')  # convert to document units
+        g = etree.SubElement(self.svg.get_current_layer(), "g", g_attribs)
+        g.label = "Hershey Text"
+        scale = self.svg.unittouu("1px")  # convert to document units
         font = getattr(hersheydata, str(self.options.fontface))
         clearfont = hersheydata.futural
         # Baseline: modernized roman simplex from JHF distribution.
@@ -100,12 +121,16 @@ class Hershey(inkex.Effect):
                 else:
                     w = draw_svg_text(q, font, w, 0, g)
                     output_generated = True
-        elif self.options.action == 'sample':
-            w, v = self.render_table_of_all_fonts('group_allfonts', g, spacing, clearfont)
+        elif self.options.action == "sample":
+            w, v = self.render_table_of_all_fonts(
+                "group_allfonts", g, spacing, clearfont
+            )
             output_generated = True
             scale *= 0.4  # Typically scales to about A4/US Letter size
-        elif self.options.action == 'sampleHW':
-            w, v = self.render_table_of_all_fonts('group_hwfonts', g, spacing, clearfont)
+        elif self.options.action == "sampleHW":
+            w, v = self.render_table_of_all_fonts(
+                "group_hwfonts", g, spacing, clearfont
+            )
             output_generated = True
             scale *= 0.5  # Typically scales to about A4/US Letter size
         else:
@@ -127,11 +152,13 @@ class Hershey(inkex.Effect):
             w = wmax
             output_generated = True
             #  Translate group to center of view, approximately
-        t = 'translate({0}, {1})'.format(str(self.view_center[0] - scale * w / 2),
-                                         str(self.view_center[1] - scale * v / 2))
+        t = "translate({0}, {1})".format(
+            str(self.svg.namedview.center[0] - scale * w / 2),
+            str(self.svg.namedview.center[1] - scale * v / 2),
+        )
         if scale != 1:
-            t += ' scale({0})'.format(scale)
-        g.set('transform', t)
+            t += " scale({0})".format(scale)
+        g.set("transform", t)
 
         if not output_generated:
             self.current_layer.remove(g)  # remove empty group, if no SVG was generated.
@@ -145,7 +172,7 @@ class Hershey(inkex.Effect):
         # Render list of font names in a vertical column:
         for f in fontgroup:
             w = 0
-            letter_vals = [ord(q) - 32 for q in (f[1] + ' -> ')]
+            letter_vals = [ord(q) - 32 for q in (f[1] + " -> ")]
             # we want to right-justify the clear text, so need to know its width
             for q in letter_vals:
                 w = svg_text_width(q, clearfont, w)
@@ -179,6 +206,9 @@ class Hershey(inkex.Effect):
         return wmax + wmin, v
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    import inkscape_ExtensionDevTools
+
+    inkscape_ExtensionDevTools.inkscape_run_debug()
     e = Hershey()
     e.affect()

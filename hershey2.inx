@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-  <_name>_Hershey Text</_name>
-  <id>com.github.jed_frey.j_extensions.hershey_text</id>
+  <_name>Hershey _Text 2</_name>
+  <id>command.dapperfu.inkscape_hershey_text2</id>
   <!-- Version 2.2 November 28, 2017 -->
-  <dependency type="executable" location="extensions">hershey.py</dependency>
-  <dependency type="executable" location="extensions">hersheydata.py</dependency>
-  <dependency type="executable" location="extensions">inkex.py</dependency>
+  <dependency type="executable" location="inx">hershey2.py</dependency>
+  <dependency type="executable" location="inx">hersheydata.py</dependency>
   <param name="tab" type="notebook">
     <page name="splash" _gui-text="Render Text">
       <_param indent="1" name="splashpage" type="description" appearance="header">
@@ -77,51 +76,35 @@ Hershey Text: Engraving Fonts for Inkscape
       <_param name="emptyspace" type="description" xml:space="preserve"> 
 </_param>
     </page>
-    <page name="info" _gui-text="About Hershey Text">
-      <_param indent="1" name="aboutTitle" type="description" appearance="header">Hershey Text 2.2</_param>
-      <_param name="aboutpage" type="description" xml:space="preserve">This tool renders a line of text using specialized
-"stroke" or "engraving" fonts designed for plotters. 
+    <page name="info" _gui-text="About Hershey Text 2">
+      <_param indent="1" name="aboutTitle" type="description" appearance="header">Hershey Text 2 v2.2</_param>
+      <_param name="aboutpage" type="description" xml:space="preserve">This is a fork of Hershey Text v2.2 to maintain the 'old' way of the script working along with fonts.
+      
+      This tool renders a line of text using specialized "stroke" or "engraving" fonts designed for plotters. 
 
-Whereas regular "outline" fonts (e.g., TrueType) work
-by filling in the region inside an invisible outline,
-engraving fonts are composed only of individual lines
-or strokes; much like human handwriting.
+Whereas regular "outline" fonts (e.g., TrueType) work by filling in the region inside an invisible outline, engraving fonts are composed only of individual lines or strokes; much like human handwriting.
 
-Engraving fonts are used for creating text paths that
-computer controlled drawing and cutting machines (from
-pen plotters to CNC routers) can efficiently follow. 
+Engraving fonts are used for creating text paths that computer controlled drawing and cutting machines (from open plotters to CNC routers) can efficiently follow. 
 
-For a full introduction, please visit:
-  www.evilmadscientist.com/go/hershey</_param>
+For a full introduction, please visit: www.evilmadscientist.com/go/hershey</_param>
     </page>
     <page name="credits" _gui-text="Credits">
       <_param name="aboutpage" type="description" xml:space="preserve">
-The classic fonts included -- those without the "EMS"
-prefix -- are derived from work by Dr. A. V. Hershey,
-distributed by the US National Bureau of Standards
-(now NIST) in NBS SP-424 1976-04, "A contribution to 
-computer typesetting techniques: Tables of Coordinates
-for Hershey's Repertory of Occidental Type Fonts and
-Graphic Symbols."
+The classic fonts included -- those without the "EMS" prefix -- are derived from work by Dr. A. V. Hershey, distributed by the US National Bureau of Standards (now NIST) in NBS SP-424 1976-04, "A contribution to computer typesetting techniques: Tables of Coordinates for Hershey's Repertory of Occidental Type Fonts and Graphic Symbols."
 
-Additional modern "EMS" fonts in this distribution are
-derivatives created from fonts licensed under the SIL
-Open Font License.
+Additional modern "EMS" fonts in this distribution are derivatives created from fonts licensed under the SIL Open Font License.
 
-For full credits and license information, please see
-the "hersheydata.py" file included with this
-distribution or visit:
-   wiki.evilmadscientist.com/hershey
+For full credits and license information, please see the "hersheydata.py" file included with this distribution or visit: wiki.evilmadscientist.com/hershey
 </_param>
     </page>
   </param>
   <effect needs-live-preview="true" needs-document="true">
     <object-type>all</object-type>
     <effects-menu>
-      <submenu _name="_jextensions"/>
+      <submenu _name="gh:_dapperfu"/>
     </effects-menu>
   </effect>
   <script>
-    <command location="inx" interpreter="python">hershey.py</command>
+    <command interpreter="python" location="inx">hershey2.py</command>
   </script>
 </inkscape-extension>
